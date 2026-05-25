@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: deployment
+metadata:
+  name: vproapp
+  labels:
+    app: vproapp
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: vproapp
+  template:
+    metadata:
+      labels:
+        app: vproapp
+    spec:
+      containers:
+      - name: vproapp
+        image: vprocontainers/vprofileapp
+        imagePullPolicy: always
+        ports:
+        - name: vproapp-port
+          containerPort: 8080
+initcontainers:
+      - name: init-busybox
+        image: busybox
+        command: ['sh', '-c', 'until nslookup vprodb.$(cat /var/run/secrets/kubernetes.io/serviceaccount/namespace).svc.cluster.local;
+          do echo waiting for vprodb; sleep 2; done;']
+      - name: init-busybox-cache
+        image: busybox
+        command: ['sh', '-c', 'until nslookup vpromp01.$(cat /var/run/secrets/kubernetes.io/serviceaccount/namespace).svc.cluster.local;
+          do echo waiting for vpromp01; sleep 2; done;']

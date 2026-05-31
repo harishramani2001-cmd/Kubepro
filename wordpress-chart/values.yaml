@@ -1,0 +1,30 @@
+wordpress:
+  image: wordpress
+  tag: 6.5-apache
+  replicas: 1
+  port: 80
+  dbHost: mysql-service
+  pvc:
+    storageClass: default
+    storage: 3Gi
+
+mysql:
+  image: mysql
+  tag: "8.0"
+  replicas: 1
+  port: 3306
+  pvc:
+    storageClass: default
+    storage: 1Gi
+
+secret:
+  mysqlRootPassword: cm9vdHBhc3N3b3Jk
+  mysqlDbName: d29yZHByZXNz
+  mysqlUser: d3B1c2Vy
+  mysqlPassword: d3BwYXNzd29yZA==
+
+ingress:
+  host: wordpress.learnexp.online
+  ingressClassName: nginx
+  path: /
+  pathType: Prefix
